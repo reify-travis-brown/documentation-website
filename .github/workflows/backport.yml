@@ -42,7 +42,7 @@ jobs:
 
       - name: Label new backport PR with backport-automerge label
         run: |
-          PR_LABELS=`echo "${{ toJson(github.event.pull_request.labels.*.name) }}" | sed -e 's/\[//g;s/\]//g' | tr -d '\n'`
+          PR_LABELS=`echo "${{ toJson(github.event.pull_request.labels.*.name) }}" | sed -e 's/\[//g;s/\]//g;s/^ //g;s/ $//g;s/\n//g'`
           echo $PR_LABELS
           OLDIFS=$IFS
           export IFS=','
