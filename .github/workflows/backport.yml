@@ -48,7 +48,7 @@ jobs:
           export IFS=','
           for i in $PR_LABELS
           do
-            echo "$i"
+            echo "###$i###"
           done
           #PR_REPO="opensearch-project/documentation-website"
           #PR_BRANCH=backport/backport-${{ github.event.pull_request.number }}-to-`echo ${{ github.event.label.name }} | cut -d ' ' -f2`
