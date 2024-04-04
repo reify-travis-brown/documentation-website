@@ -42,8 +42,8 @@ jobs:
 
       - name: Label new backport PR with backport-automerge label
         run: |
-          echo ${{ github.event.pull_request.*.labels }}
-          PR_LABELS=`echo "${{ toJson(github.event.pull_request.labels.*.name) }}"`
+          PR_LABELS=`echo "${{ toJson(github.event.pull_request.labels.*.name) }}" | sed -e 's/\[//g;s/\]//g'`
+          echo $PR_LABELS
           #PR_REPO="opensearch-project/documentation-website"
           #PR_BRANCH=backport/backport-${{ github.event.pull_request.number }}-to-`echo ${{ github.event.label.name }} | cut -d ' ' -f2`
           #PR_NUMBER=`gh pr list -R $PR_REPO --json "number,headRefName" --state open | jq -r ".[] | select(.headRefName == \"$PR_BRANCH\") | .number"`
