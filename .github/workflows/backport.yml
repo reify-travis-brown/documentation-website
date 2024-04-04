@@ -46,16 +46,18 @@ jobs:
           echo $PR_LABELS
           OLDIFS=$IFS
           export IFS=','
-          for i in $PR_LABELS
+          for label in $PR_LABELS
           do
-            echo "###$i###"
+            if [[ "$label" == "backport"* ]]; then
+              echo "Found label \"$label\""
+              PR_REPO="opensearch-project/documentation-website"
+              PR_BRANCH=backport/backport-${{ github.event.pull_request.number }}-to-`echo $label | cut -d ' ' -f2`
+              PR_NUMBER=`gh pr list -R $PR_REPO --json "number,headRefName" --state open | jq -r ".[] | select(.headRefName == \"$PR_BRANCH\") | .number"`
+              echo "Update Backport PR '#$PR_NUMBER' on branch '$PR_BRANCH' with 'backport-automerge' label"
+              gh issue edit -R $PR_REPO $PR_NUMBER --add-label backport-automerge
+              echo "Auto approve $PR_REPO PR #$PR_NUMBER with opensearch-trigger-bot"
+              gh pr review -R $PR_REPO $PR_NUMBER --approve
+            fi
           done
-          #PR_REPO="opensearch-project/documentation-website"
-          #PR_BRANCH=backport/backport-${{ github.event.pull_request.number }}-to-`echo ${{ github.event.label.name }} | cut -d ' ' -f2`
-          #PR_NUMBER=`gh pr list -R $PR_REPO --json "number,headRefName" --state open | jq -r ".[] | select(.headRefName == \"$PR_BRANCH\") | .number"`
-          #echo "Update Backport PR '#$PR_NUMBER' on branch '$PR_BRANCH' with 'backport-automerge' label"
-          #gh issue edit -R $PR_REPO $PR_NUMBER --add-label backport-automerge
-          #echo "Auto approve $PR_REPO PR #$PR_NUMBER with opensearch-trigger-bot"
-          #gh pr review -R $PR_REPO $PR_NUMBER --approve
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
